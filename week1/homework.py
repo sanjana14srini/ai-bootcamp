@@ -143,7 +143,7 @@ def chunk_documents(
     return results
 
 
-def index_documents(documents, chunk: bool = False, chunking_params=None) -> Index:
+def index_documents(documents, chunk: bool = True, chunking_params=None) -> Index:
     """
     Create a searchable index from a collection of documents.
 
@@ -168,10 +168,11 @@ def index_documents(documents, chunk: bool = False, chunking_params=None) -> Ind
         if chunking_params is None:
             chunking_params = {'size': 30, 'step': 15}
         documents = chunk_documents(documents, **chunking_params)
+        print(documents[10]['title'])
         print(f"We have generated {len(documents)} chunks from the podcasts")
 
     index = Index(
-        text_fields=["content", "filename"],
+        text_fields=["content", "title", "filename"],
     )
 
     index.fit(documents)
@@ -182,7 +183,6 @@ def index_documents(documents, chunk: bool = False, chunking_params=None) -> Ind
 # Downloading and extracting the github data
 data_raw = read_github_data()
 print(f"Downloaded {len(data_raw)} podcast transcripts")
-# print(data_raw[2])
 
 # Parsing the data to the dictionary format
 parsed_data = parse_data(data_raw)
@@ -197,7 +197,7 @@ search_result = index.search(
 )
 
 
-print(f"First search result for \" how do I make money with AI \" \
+print(f"First search result for \" how do I make money with AI \": \
       \nseason: {search_result[0]['season']} \
-      \nespisode: {search_result[0]['episode']} \
+      \nepisode: {search_result[0]['episode']} \
       \ntitle: {search_result[0]['title']}")
