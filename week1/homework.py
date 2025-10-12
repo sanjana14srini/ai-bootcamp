@@ -3,6 +3,7 @@ import frontmatter
 
 from typing import Any, Dict, Iterable, List
 from minsearch import Index
+import re
 
 
 def filename_filter(filepath, folder_name='_podcast/s'):
@@ -46,7 +47,7 @@ def extract_only_transcript_text(doc_content):
     transcript_text = " "
     for d in doc_content[1:]:
         if 'line' in d.keys():
-            transcript_text += d['line']
+            transcript_text += re.split(r"\n\s*\n" ,d['line'].strip())[0]
         elif 'header' in d.keys():
             transcript_text += d['header']
     
@@ -168,36 +169,41 @@ def index_documents(documents, chunk: bool = True, chunking_params=None) -> Inde
         if chunking_params is None:
             chunking_params = {'size': 30, 'step': 15}
         documents = chunk_documents(documents, **chunking_params)
-        print(documents[10]['title'])
         print(f"We have generated {len(documents)} chunks from the podcasts")
 
     index = Index(
-        text_fields=["content", "title", "filename"],
+        text_fields=["content", "title"],
     )
 
     index.fit(documents)
     return index
 
+def search_index(index, query, n):
+    search_result = index.search(query, num_results=n)
+
+    return search_result
 
 
-# Downloading and extracting the github data
-data_raw = read_github_data()
-print(f"Downloaded {len(data_raw)} podcast transcripts")
+def main():
+    # Downloading and extracting the github data
+    data_raw = read_github_data()
+    print(f"Downloaded {len(data_raw)} podcast transcripts")
 
-# Parsing the data to the dictionary format
-parsed_data = parse_data(data_raw)
+    # Parsing the data to the dictionary format
+    parsed_data = parse_data(data_raw)
 
-#Chunk the data and index using minsearch
-index = index_documents(parsed_data)
+    #Chunk the data and index using minsearch
+    index = index_documents(parsed_data)
 
-# Test the question 
-search_result = index.search(
-    "how do I make money with AI?",
-    num_results=1
-)
+    # Test the question 
+    query = "how do I make money with AI?"
+    search_result = search_index(index, query, n=10)
 
 
-print(f"First search result for \" how do I make money with AI \": \
-      \nseason: {search_result[0]['season']} \
-      \nepisode: {search_result[0]['episode']} \
-      \ntitle: {search_result[0]['title']}")
+    print(f"First search result for \" {query} \": \
+        \nseason: {search_result[0]['season']} \
+        \nepisode: {search_result[0]['episode']} \
+        \ntitle: {search_result[0]['title']}")
+
+if __name__ == "__main__":
+    main()
