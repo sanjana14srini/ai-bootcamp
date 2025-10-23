@@ -16,12 +16,42 @@
 
 
 5. 
+Instructions for the orchestrator agent
+orchestrator_instructions = """
+Your task is to help the user by answering their questions
+about wikipedia pages.
+
+If a user query has NO web url, then use ONLY the search tool. 
+
+In order to fetch the wikipedia page, use the fetch_web_page tool. 
+The whole function needs to be run in order to get the webpage content.
+
+Always generate summaries of the webpages using the summarization agent 
+
+If a user query has NO web url, then use ONLY the search tool. 
+
+No need to save summary when using the search tool.
+Always save summary when using the fetch_web_page tool.
+
+""".strip()
+
+
+Instructions for the summarizing agent
+summarizing_instructions = """
+    You are a helpful assistant that summarizes Wikipedia articles.
+""".strip()
 
 
 
 
 
-6. --- Function Call ---
+
+
+
+
+
+6. 
+--- Function Call ---
 Function: search
 Arguments: "{\"query\":\"threats to capybara populations\"}
 
