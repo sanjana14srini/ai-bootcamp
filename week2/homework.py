@@ -1,26 +1,20 @@
 import requests
 from typing import Optional
-import frontmatter
 from minsearch import AppendableIndex
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.messages import FunctionToolCallEvent
 from pydantic import BaseModel
 import re
-
-from toyaikit.chat import IPythonChatInterface
 from toyaikit.chat.interface import StdOutputInterface
 from toyaikit.chat.runners import PydanticAIRunner
 from typing import Any, Dict, Iterable, List
 import asyncio
-from IPython.core.display import HTML
 
-import webbrowser
-from pathlib import Path
 
 
 reader_url_prefix = "https://r.jina.ai/"
 
-
-from pydantic_ai.messages import FunctionToolCallEvent
+# Defining all helper classes and functions
 
 class NamedCallback:
 
@@ -42,11 +36,13 @@ class NamedCallback:
     async def __call__(self, ctx, event):
         return await self.print_function_calls(ctx, event)
 
+
 class FetchQuery(BaseModel):
     query: str
 
 class FetchParams(BaseModel):
     url: str
+
 
 def sliding_window(
         seq: Iterable[Any],
@@ -87,6 +83,8 @@ def sliding_window(
     return result
 
 
+
+# Main agent class that will be used for defining the agent tools
 class AgentTools:
 
     def __init__(self, index):
@@ -167,7 +165,7 @@ class AgentTools:
 
         return metadata
 
-    # @classmethod
+
     def fetch_web_page(self, params: FetchParams) -> Optional[str]:
         f"""
         Returns web page content for {params}
@@ -182,8 +180,6 @@ class AgentTools:
     
 
     def add_to_index(self, metadata):
-        documents = []
-
         content = metadata["markdown_content"]
         chunks = sliding_window(content, size=3000, step=1000)
 
@@ -197,9 +193,7 @@ class AgentTools:
 
             self.index.append(doc)
 
-        # self.index.append(documents)
 
-    # @staticmethod
     def search(self, params: FetchQuery):
         """
         Search the index for documents matching the given query and return the contents.
@@ -211,20 +205,12 @@ class AgentTools:
     
 
 
-
+# Instanciating the agent_class
 index = AppendableIndex(text_fields=["title", "url_source", "published_time", "content"])
-
 agent_class = AgentTools(index)
 
-class FetchParams(BaseModel):
-    url: str
 
-
-
-agent_tools = [agent_class.fetch_web_page, agent_class.search]
-
-
-
+# Summarizing agent
 summarizing_instructions = """
     You are a helpful assistant that summarizes Wikipedia articles.
 """.strip()
@@ -237,9 +223,7 @@ summarize_agent = Agent(
 )
 
 
-# summarize_agent.add_tool(agent_class.search)
-
-
+# Main orchestrator agent
 orchestrator_instructions = """
 Your task is to help the user by answering their questions
 about wikipedia pages.
@@ -258,6 +242,9 @@ Always save summary when using the fetch_web_page tool.
 
 """.strip()
 
+
+agent_tools = [agent_class.fetch_web_page, agent_class.search]
+
 orchestrator = Agent(
     name='orchestrator',
     tools=agent_tools,
@@ -265,7 +252,7 @@ orchestrator = Agent(
     model='gpt-4o-mini',
 )
 
-
+# Defining the orchestrator tool that correctly integrates the summarizing agent into the orchestrator agent
 @orchestrator.tool
 async def generate_and_save_summary(ctx: RunContext, query: str, summary: bool):
     """
@@ -290,8 +277,7 @@ async def generate_and_save_summary(ctx: RunContext, query: str, summary: bool):
 
     return results.output
 
-agent_class.fetch_web_page
-# chat_interface = IPythonChatInterface()
+
 chat_interface = StdOutputInterface()
 
 runner = PydanticAIRunner(
@@ -299,12 +285,12 @@ runner = PydanticAIRunner(
     agent=orchestrator
 )
 
-async def main():
 
+async def main():
     result = await runner.run();
     output = result.data 
-
     print(output)
+
 
 
 
