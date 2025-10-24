@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "arxiv2text",
     "feedparser>=6.0.12",
     "jupyter>=1.1.1",
     "minsearch>=0.0.7",
@@ -15,3 +16,6 @@ dependencies = [
     "requests>=2.32.5",
     "toyaikit>=0.0.4",
 ]
+
+[tool.uv.sources]
+arxiv2text = { git = "https://github.com/dsdanielpark/arxiv2text.git" }
