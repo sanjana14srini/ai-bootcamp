@@ -6,9 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "arxiv2text",
+    "elasticsearch>=9.2.0",
     "feedparser>=6.0.12",
     "jupyter>=1.1.1",
     "minsearch>=0.0.7",
+    "mwparserfromhell>=0.7.2",
     "openai>=2.2.0",
     "openai-agents>=0.1.0",
     "pydantic-ai>=1.2.1",
@@ -19,3 +21,8 @@ dependencies = [
 
 [tool.uv.sources]
 arxiv2text = { git = "https://github.com/dsdanielpark/arxiv2text.git" }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]

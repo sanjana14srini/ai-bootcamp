@@ -1,5 +1,5 @@
 1. 
-
+https://github.com/sanjana14srini/ai-bootcamp/blob/main/capstone_project/project.py
 
 2. Chunking strategy for project:
 The task of this project is to be read in research papers from arxiv and build agent(s) that can answer questions about these papers, 
@@ -70,12 +70,6 @@ Instructions for the summarizing agent
 summarizing_instructions = """
     You are a helpful assistant that summarizes Wikipedia articles.
 """.strip()
-
-
-
-
-
-
 
 
 
