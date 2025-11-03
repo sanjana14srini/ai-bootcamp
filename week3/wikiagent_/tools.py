@@ -78,7 +78,9 @@ class AgentTools:
 
 
     def search(self, search_query: str):
-
+        """
+        Searches wikipedia page based on user query.
+        """
         # search_query = search_query.replace(" ", "+")
         url = "https://en.wikipedia.org/w/api.php"
         params = {
@@ -109,7 +111,9 @@ class AgentTools:
 
     
     def get_page(self, page_title: str):
-
+        """
+        Gets wikipedia pages based on user query.
+        """
         url = f" https://en.wikipedia.org/w/index.php"
 
         params = {

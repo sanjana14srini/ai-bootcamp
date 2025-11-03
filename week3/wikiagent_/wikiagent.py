@@ -12,6 +12,36 @@ import asyncio
 from wikiagent_.tools import AgentTools
 
 
+class Reference(BaseModel):
+    title: str
+    url: str
+
+class Section(BaseModel):
+    heading: str
+    content: str
+    references: list[Reference]
+
+class SearchResultArticle(BaseModel):
+    title: str
+    sections: list[Section]
+    references: list[Reference]
+
+    def format_article(self):
+        output = f"# {self.title}\n\n"
+
+        for section in self.sections:
+            output += f"## {section.heading}\n\n"
+            output += f"{section.content}\n\n"
+            output += "### References\n"
+            for ref in section.references:
+                output += f"- [{ref.title}]({ref.url})\n"
+
+        output += "## References\n"
+        for ref in self.references:
+            output += f"- [{ref.title}]({ref.url})\n"
+
+        return output
+
 
 class NamedCallback:
 
@@ -50,7 +80,7 @@ def create_agents():
     Utilize these search results to find relevant wikipedia page content from the get_page tool.
 
     Use all these results to respond to the user's question.
-    Provide references wherever possible.
+    Always provide references.
 
     """.strip()
 
@@ -62,6 +92,7 @@ def create_agents():
         tools=agent_tools,
         instructions=orchestrator_instructions,
         model='gpt-4o-mini',
+        output_type=SearchResultArticle
     )
 
     
