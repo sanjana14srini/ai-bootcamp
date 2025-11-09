@@ -24,7 +24,7 @@ def run_agent_sync(user_prompt: str):
 
 
 def main():
-    result = run_agent_sync("LLM as a Judge")
+    result = run_agent_sync("where do capybaras live?")
     print(result.output)
 
 
