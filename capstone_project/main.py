@@ -10,6 +10,20 @@ agent_callback = NamedCallback(agent)
 
 
 
+async def run_agent(user_prompt: str):
+
+    results = await agent.run(
+            user_prompt=user_prompt,
+            event_stream_handler=agent_callback
+    )
+
+    return results
+
+
+def run_sync_agent(user_prompt: str):
+    return asyncio.run(run_agent(user_prompt))
+
+
 async def main():
     chat_interface = StdOutputInterface()
 

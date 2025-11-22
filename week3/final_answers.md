@@ -1,10 +1,10 @@
 1. 
-I want my agent to be able to extract the relevant documents based on key words, perform search, summarization and comparison.
-The agent should also be able to generate literature reviews when prompted by the user
+I want my agent to be able to extract the relevant documents from the arxiv api based on key words, perform search, summarization and comparison. It does not have to write anything back to the api/database.
+Ultimately the agent should also be able to generate literature reviews when prompted by the user.
 
 2. 
-Tool 1: Extract Data from arxiv artciles
-Tool 2: Searching
+Tool 1: Extract Data from arxiv artciles (get_data_to_index)
+Tool 2: Searching (search)
 
 
 3.
