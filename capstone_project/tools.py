@@ -72,6 +72,18 @@ class Agent_Tools():
         else:
             self.max_results = max_results
         self.index = es_index
+        self.index_settings = {
+            "mappings": {
+                "properties": {
+                        "id": {"type": "text"},
+                        "title": {"type": "text"},
+                        "authors": {"type": "keyword"},
+                        "published": {"type": "text"},
+                        "summary": {"type": "text"},
+                        "content": {"type": "text"},
+                }
+            }
+        }
 
 
     def get_metadata(self, paper_name="electron"):
@@ -124,21 +136,8 @@ class Agent_Tools():
         else:
             print("❌ Connection failed")
 
-        index_settings = {
-            "mappings": {
-                "properties": {
-                        "id": {"type": "text"},
-                        "title": {"type": "text"},
-                        "authors": {"type": "keyword"},
-                        "published": {"type": "text"},
-                        "summary": {"type": "text"},
-                        "content": {"type": "text"},
-                }
-            }
-        }
-
         if not self.index.indices.exists(index=self.index_name):
-            self.index.indices.create(index=self.index_name, body=index_settings)
+            self.index.indices.create(index=self.index_name, body=self.index_settings)
             print(f"✅ Created index: {self.index_name}")
 
         for chunks in tqdm(doc):        
@@ -163,6 +162,9 @@ class Agent_Tools():
                 }
             }
         }
+        
+        if not self.index.indices.exists(index=self.index_name):
+            self.index.indices.create(index=self.index_name, body=self.index_settings)
 
         response = self.index.search(index=self.index_name, body=es_query)
 

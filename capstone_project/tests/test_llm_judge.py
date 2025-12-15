@@ -77,7 +77,8 @@ Tool calls:
 async def test_no_judicial_terms_in_search_queries():
     criteria = [
         "agent makes at least 1 search call",
-        "the references are relevant to the topic",
+        "there are at least 3 references provided"
+        "the references are appropriate and relevant to the topic",
         "the summary contains broader intrdocution before describing finer details",
     ]
 

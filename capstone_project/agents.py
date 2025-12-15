@@ -21,6 +21,7 @@ class SearchResultSummary(BaseModel):
     def format_article(self):
         output = f"# {self.title}\n\n"
 
+        output += f"## Summary \n {self.summary} \n\n"
         output += "## References\n"
         for ref in self.references:
             output += f"- [{ref.title}]({ref.url})\n"
@@ -65,7 +66,7 @@ def create_agents():
         Then you perfrom a search using the search tool again.
 
         You answer the user's question by summarizing all these search results.
-        You always provide references to all artciles you use when summarizing search results.
+        You always provide at least 3 relevant and appropriate references to all artciles you use when summarizing search results.
     """.strip()
 
     summarizing_tools = [agent_class.get_data_to_index, agent_class.search]
@@ -74,7 +75,7 @@ def create_agents():
         name="summarize",
         tools=summarizing_tools,
         instructions=summarizing_instructions,
-        model='gpt-4o-mini',
+        model='openai:gpt-4o-mini',
         output_type=SearchResultSummary
     )
 
